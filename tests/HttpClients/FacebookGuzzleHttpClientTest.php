@@ -21,14 +21,14 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
+
 namespace Facebook\Tests\HttpClients;
 
-use Mockery as m;
 use Facebook\HttpClients\FacebookGuzzleHttpClient;
-use GuzzleHttp\Message\Request;
-use GuzzleHttp\Message\Response;
-use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use Mockery as m;
 
 class FacebookGuzzleHttpClientTest extends AbstractTestHttpClient
 {
@@ -51,9 +51,7 @@ class FacebookGuzzleHttpClientTest extends AbstractTestHttpClient
     public function testCanSendNormalRequest()
     {
         $request = new Request('GET', 'http://foo.com');
-
-        $body = Stream::factory($this->fakeRawBody);
-        $response = new Response(200, $this->fakeHeadersAsArray, $body);
+        $response = new Response(200, $this->fakeHeadersAsArray, $this->fakeRawBody);
 
         $this->guzzleMock
             ->shouldReceive('createRequest')

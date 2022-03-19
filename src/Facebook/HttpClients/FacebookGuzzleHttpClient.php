@@ -21,15 +21,15 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
+
 namespace Facebook\HttpClients;
 
-use Facebook\Http\GraphRawResponse;
 use Facebook\Exceptions\FacebookSDKException;
-
+use Facebook\Http\GraphRawResponse;
 use GuzzleHttp\Client;
-use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Ring\Exception\RingException;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class FacebookGuzzleHttpClient implements FacebookHttpClientInterface
 {
@@ -58,14 +58,15 @@ class FacebookGuzzleHttpClient implements FacebookHttpClientInterface
             'connect_timeout' => 10,
             'verify' => __DIR__ . '/certs/DigiCertHighAssuranceEVRootCA.pem',
         ];
-        $request = $this->guzzleClient->createRequest($method, $url, $options);
 
         try {
-            $rawResponse = $this->guzzleClient->send($request);
-        } catch (RequestException $e) {
+            $rawResponse = $this->guzzleClient->request($method, $url, $options);
+        } catch (ClientException $e) {
             $rawResponse = $e->getResponse();
 
-            if ($e->getPrevious() instanceof RingException || !$rawResponse instanceof ResponseInterface) {
+            throw new FacebookSDKException($e->getMessage(), $e->getCode());
+        } catch (RequestException $e) {
+            if (!$e->hasResponse()) {
                 throw new FacebookSDKException($e->getMessage(), $e->getCode());
             }
         }
