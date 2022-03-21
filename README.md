@@ -1,4 +1,4 @@
-# Facebook SDK for PHP (v6)
+# Facebook SDK for PHP (v13) IN DEVELOPMENT
 
 [![Build Status](https://api.travis-ci.com/nickdnk/php-graph-sdk.svg)](https://travis-ci.com/github/nickdnk/php-graph-sdk)
 [![Latest Stable Version](http://img.shields.io/badge/Latest%20Stable-6.0.1-blue.svg)](https://packagist.org/packages/nickdnk/graph-sdk)
