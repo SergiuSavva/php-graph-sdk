@@ -28,7 +28,7 @@ use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Http\GraphRawResponse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 
 class FacebookGuzzleHttpClient implements FacebookHttpClientInterface
@@ -62,13 +62,12 @@ class FacebookGuzzleHttpClient implements FacebookHttpClientInterface
         try {
             $rawResponse = $this->guzzleClient->request($method, $url, $options);
         } catch (ClientException $e) {
-            $rawResponse = $e->getResponse();
-
-            throw new FacebookSDKException($e->getMessage(), $e->getCode());
-        } catch (RequestException $e) {
-            if (!$e->hasResponse()) {
-                throw new FacebookSDKException($e->getMessage(), $e->getCode());
+            if ($e->hasResponse()) {
+                throw new FacebookSDKException($e->getResponse(), $e->getCode());
             }
+            throw new FacebookSDKException($e->getMessage(), $e->getCode());
+        } catch (GuzzleException $e) {
+            throw new FacebookSDKException($e->getMessage(), $e->getCode());
         }
 
         $rawHeaders = $this->getHeadersAsString($rawResponse);
